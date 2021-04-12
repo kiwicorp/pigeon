@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/selftechio/github-rnt-scraper-playground/internal/github"
+	"github.com/selftechio/pigeon/internal/github"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 )

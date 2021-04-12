@@ -1,4 +1,4 @@
-module github.com/selftechio/github-rnt-scraper-playground
+module github.com/selftechio/pigeon
 
 go 1.16
 
