@@ -1,21 +1,18 @@
 # Makefile
 
+# Override the shell used.
 SHELL = /bin/bash
 
-PACKAGE = $(shell cat go.mod | head -n 1 | cut -d ' ' -f 2)
+# Targets to be manipulated by this Makefile.
+TARGETS ?= $(shell ls cmd)
 
-BINS ?= $(shell ls cmd)
+# Version to be used for various recipes.
+VERSION ?= dev
 
-build: cmd/$(BINS)
+build:
+	@ ./scripts/build.sh $(VERSION) $(TARGETS)
+.PHONY: build
 
-package: cmd/$(BINS)/$(BINS).zip
-
-cmd/$(BINS):
-	go build \
-		-o "$@/$(shell basename $@)-$(shell go env GOOS)-$(shell go env GOARCH)" \
-		"$(PACKAGE)/$@"
-.PHONY:	cmd/$(BINS)
-
-cmd/$(BINS)/$(BINS).zip:
-	zip $@ cmd/$(shell basename -s .zip $@)/$(shell basename -s .zip $@)-linux-amd64
-.PHONY: cmd/$(BINS)/$(BINS).zip
+package:
+	@ ./scripts/package.sh $(VERSION) $(TARGETS)
+.PHONY: package
