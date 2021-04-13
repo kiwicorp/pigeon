@@ -8,6 +8,8 @@
 # required by AWS Lambdas. To override the default settings, explicitly declare
 # `GOOS` and `GOARCH`.
 
+set -e
+
 function print_help() {
     cat <<EOF
 scripts/build.sh - Build pigeon targets.
@@ -39,7 +41,11 @@ function build() {
     local new_buildid
     new_buildid="$(go tool buildid ${outdir}/${outfile})"
     local old_buildid
-    old_buildid="$(cat ${outdir}/${outfile}.buildid 2>/dev/null)"
+    if [[ -f "${outdir}/${outfile}.buildid" ]]; then
+        old_buildid="$(cat ${outdir}/${outfile}.buildid 2> /dev/null)"
+    else
+        old_buildid=""
+    fi
 
     if [[ "${new_buildid}" != "${old_buildid}" ]]; then
         printf "%s" "${new_buildid}" > "${outdir}/${outfile}.buildid"
@@ -50,12 +56,12 @@ function main() {
     local version
     version="${1}"; shift
     if [[ -z "${version}" ]]; then
-        printf "scripts/build.sh: %s\n" "no version specified\n"
+        printf "build: %s\n" "no version specified\n"
         print_help
         exit 1
     fi
     if [[ -z "$@" ]]; then
-        printf "scripts/build.sh: %s\n" "no targets specified\n"
+        printf "build: %s\n" "no targets specified\n"
         print_help
         exit 1
     fi
@@ -74,10 +80,10 @@ function main() {
     local package
     package="$(head -n 1 < go.mod | cut -d ' ' -f 2)"
 
-    printf "scripts/build.sh: %s\n" "${package} ${version} ${platform}/${arch}"
+    printf "build: %s\n" "${package} ${version} ${platform}/${arch}"
 
     for target in $@; do
-        printf "scripts/build.sh: %s\n" "building ${target}"
+        printf "build: %s\n" "building ${target}"
 
         build "${package}/cmd/${target}" "${version}" "${platform}" "${arch}"
     done

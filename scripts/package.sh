@@ -7,6 +7,8 @@
 # AWS Lambda requires binaries to be built for linux/amd64. Therefore, packaging
 # will only work for that platform and architecture combination.
 
+set -e
+
 function print_help() {
     cat <<EOF
 scripts/package.sh - Package pigeon targets
@@ -30,7 +32,7 @@ function package() {
     local filename
     filename="$(basename ${target})_${version}_${platform}_${arch}"
 
-    zip "${outdir}/${filename}.zip" "${outdir}/${filename}"
+    zip "${outdir}/${filename}.zip" "${outdir}/${filename}" > /dev/null
 }
 
 function check_if_already_up_to_date() {
@@ -68,12 +70,12 @@ function main() {
     local version
     version="${1}"; shift
     if [[ -z "${version}" ]]; then
-        printf "scripts/package.sh: %s\n" "no version specified\n"
+        printf "package: %s\n" "no version specified\n"
         print_help
         exit 1
     fi
     if [[ -z "$@" ]]; then
-        printf "scripts/package.sh: %s\n" "no targets specified\n"
+        printf "package: %s\n" "no targets specified\n"
         print_help
         exit 1
     fi
@@ -90,7 +92,7 @@ function main() {
     arch="$(go env GOARCH)"
 
     if [[ "${platform}/${arch}" != "linux/amd64" ]]; then
-        printf "scripts/package.sh: %s, %s\n\n" \
+        printf "package: %s, %s\n\n" \
             "expected linux/amd64" \
             "refusing to package for ${platform}/${arch}"
         print_help
@@ -100,15 +102,15 @@ function main() {
     local package
     package="$(head -n 1 < go.mod | cut -d ' ' -f 2)"
 
-    printf "scripts/package.sh: %s\n" "${package} ${version} ${platform}/${arch}"
+    printf "package: %s\n" "${package} ${version} ${platform}/${arch}"
 
     for target in $@; do
-        printf "scripts/package.sh: %s\n" "packaging ${target}"
+        printf "package: %s\n" "packaging ${target}"
 
         local utd
         utd="$(check_if_already_up_to_date ${package}/cmd/${target} ${version} ${platform} ${arch})"
         if [[ "${utd}" == "true" ]]; then
-            printf "scripts/package.sh: %s\n" "already up to date"
+            printf "package: %s\n" "already up to date"
             continue
         fi
 
