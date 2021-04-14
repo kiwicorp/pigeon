@@ -12,7 +12,7 @@ provider "aws" {
   skip_requesting_account_id  = true
 }
 
-module "lambda_function_test" {
+module "demo_github_content_function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "1.45.0"
 
@@ -22,26 +22,33 @@ module "lambda_function_test" {
   runtime       = "go1.x"
 
   create_package         = false
-  local_existing_package = "../../cmd/lambda/lambda.zip"
+  local_existing_package = "../../cmd/lambda/lambda_dev_linux_amd64.zip"
 }
 
-# module "eventbridge_test" {
-#   source  = "terraform-aws-modules/eventbridge/aws"
-#   version = "1.1.0"
+module "demo_github_content_event" {
+  source  = "terraform-aws-modules/eventbridge/aws"
+  version = "1.1.0"
 
-#   rules = {
-#     schedule_lambda = {
-#       description   = "Schedule lambda execution.",
-#       schedule_expression = "cron(* * * * * *)"
-#     }
-#   }
+  create_bus = false
 
-#   targets = {
-#     schedule_lambda = [
-#       {
-#         arn  = module.lambda_function_test.this_lambda_function_invoke_arn
-#         name = "Execute lambda function"
-#       }
-#     ]
-#   }
-# }
+  rules = {
+    schedule_lambda = {
+      description   = "Schedule lambda execution.",
+      schedule_expression = "cron(0 0 ? * * *)"
+    }
+  }
+
+  targets = {
+    schedule_lambda = [
+      {
+        arn  = module.demo_github_content_function.this_lambda_function_arn
+        name = "Execute lambda function"
+        constant = jsonencode({
+          access_token = "TODO!"
+          repo_owner   = "tokio-rs"
+          repo_name    = "tokio"
+        })
+      }
+    ]
+  }
+}
