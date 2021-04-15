@@ -12,7 +12,7 @@ provider "aws" {
   skip_requesting_account_id  = true
 }
 
-module "demo_github_content_function" {
+module "gh_content_fn" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "1.45.0"
 
@@ -25,18 +25,28 @@ module "demo_github_content_function" {
   local_existing_package = "../../cmd/lambda/lambda_dev_linux_amd64.zip"
 }
 
-module "demo_github_content_event" {
+module "gh_content_event" {
   source  = "terraform-aws-modules/eventbridge/aws"
   version = "1.1.0"
 
   create_bus = false
 
-  rules = {
-    schedule_lambda = {
-      description   = "Schedule lambda execution.",
-      schedule_expression = "cron(0 0 ? * * *)"
-    }
-  }
+  rules = { for gh_content in var.gh_content : "event_${gh_content.repo_owner}_${gh_content.repo_name}" => {
+    description         = "GitHub content - ${gh_content.repo_owner}/${gh_content.repo_name}."
+    schedule_expression = "cron(0 0 ? * * *)"
+  } }
+
+  # targets = { for gh_content in var.gh_content : "target_${gh_content.repo_owner}_${gh_content.repo_name}" => [
+  #   {
+  #     arn  = module.gh_content_fn.this_lambda_function_arn
+  #     name = "target_${gh_content.repo_owner}_${gh_content.repo_name}"
+  #     constant = jsonencode({
+  #         access_token = var.gh_access_token
+  #         repo_owner   = gh_content.repo_owner
+  #         repo_name    = gh_content.repo_name
+  #       })
+  #   }
+  # ] }
 
   targets = {
     schedule_lambda = [
