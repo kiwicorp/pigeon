@@ -17,12 +17,12 @@ module "gh_content_fn" {
   version = "1.45.0"
 
   function_name = "content_github_releases"
-  description   = "A test lambda function."
-  handler       = "cmd/content_github_releases/content_github_releases-linux-amd64"
+  description   = "GitHub Releases content function."
+  handler       = "cmd/content_github_releases/content_github_releases_dev_linux_amd64"
   runtime       = "go1.x"
 
   create_package         = false
-  local_existing_package = "../../cmd/content_github_releases/content_github_releases.zip"
+  local_existing_package = "../../cmd/content_github_releases/content_github_releases_dev_linux_amd64.zip"
 
   tags = local.tags
 }
@@ -61,7 +61,8 @@ locals {
     PigeonReleaseName = "gh-content-demo-mvp"
   }
 
-  event_rule_names = [for gh_content in var.gh_content : "event_${gh_content.repo_owner}_${gh_content.repo_name}"]
+  event_rule_names = [for gh_content in var.gh_content : "event_rule_${gh_content.repo_owner}_${gh_content.repo_name}"]
+  event_target_names = [for gh_content in var.gh_content : "event_target_${gh_content.repo_owner}_${gh_content.repo_name}"]
 
   event_rules = { for index, gh_content in var.gh_content : local.event_rule_names[index] => {
     description         = "GitHub content - ${gh_content.repo_owner}/${gh_content.repo_name}."
@@ -69,7 +70,7 @@ locals {
   } }
 
   event_targets = { for index, gh_content in var.gh_content : local.event_rule_names[index] => [{
-    name = "Execute lambda for ${gh_content.repo_owner}/${gh_content.repo_name}."
+    name = local.event_target_names[index]
     arn  = module.gh_content_fn.this_lambda_function_arn
     constant = jsonencode({
       access_token = var.gh_access_token
