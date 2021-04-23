@@ -33,7 +33,10 @@ function build() {
     local outfile
     outfile="$(basename ${target})_${version}_${platform}_${arch}"
 
-    GOOS="${platform}" GOARCH="${GOARCH}" \
+    # binary stripping: -ldflags "-s -w"
+    GOOS="${platform}" \
+        GOARCH="${GOARCH}" \
+        CGO_ENABLED=0 \
         go build \
             -o "${outdir}/${outfile}" \
             "${target}"
