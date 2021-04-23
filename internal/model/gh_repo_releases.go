@@ -8,13 +8,17 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-// GithubRepositoryReleases is the database model for repository releases
-// objects.
+// GithubRepositoryReleases is the model for a repository releases object.
 type GithubRepositoryReleases struct {
-	Urn string
+	Urn        string
+	TotalCount int
+	Data       []GithubRepositoryReleasesData
+}
 
-	TotalCount int32
-	Author     struct {
+// GithubRepositoryReleasesData represents the data that changed since the last
+// check.
+type GithubRepositoryReleasesData struct {
+	Author struct {
 		Email string
 		Login string
 	}
