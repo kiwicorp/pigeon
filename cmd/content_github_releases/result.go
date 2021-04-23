@@ -1,11 +1,11 @@
 package main
 
 type Result struct {
-	Changes uint `json:"changes"`
+	Changed bool `json:"changed"`
 }
 
-func newResult(changes uint) *Result {
+func newResult(changed bool) *Result {
 	return &Result{
-		Changes: changes,
+		Changed: changed,
 	}
 }

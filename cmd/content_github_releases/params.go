@@ -1,7 +1,13 @@
 package main
 
-func validateParams(params Params) *Error {
-	errs := make([]error, 3)
+type Params struct {
+	AccessToken string `json:"access_token"`
+	RepoOwner   string `json:"repo_owner"`
+	RepoName    string `json:"repo_name"`
+}
+
+func validateParams(params Params) error {
+	errs := make([]error, 0, 3)
 	if params.AccessToken == "" {
 		errs = append(errs, ErrMissingAccessToken)
 	}
@@ -18,10 +24,4 @@ func validateParams(params Params) *Error {
 		}
 	}
 	return nil
-}
-
-type Params struct {
-	AccessToken string `json:"access_token"`
-	RepoOwner   string `json:"repo_owner"`
-	RepoName    string `json:"repo_name"`
 }
