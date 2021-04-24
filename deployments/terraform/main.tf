@@ -24,6 +24,30 @@ module "gh_content_fn" {
   create_package         = false
   local_existing_package = "../../cmd/content_github_releases/content_github_releases_dev_linux_amd64.zip"
 
+  attach_policy_statements = true
+  policy_statements = {
+    dynamodb = {
+      effect    = "Allow",
+      actions   = [
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+      ],
+      resources = [module.content_table.this_dynamodb_table_arn]
+    }
+    dynamodb_index = {
+      effect    = "Allow",
+      actions   = [
+        "dynamodb:Query",
+        "dynamodb:Scan",
+      ],
+      resources = ["${module.content_table.this_dynamodb_table_arn}/index/*"]
+    }
+  }
+
   tags = local.tags
 }
 
@@ -42,12 +66,14 @@ module "gh_content_events" {
 module "content_table" {
   source = "terraform-aws-modules/dynamodb-table/aws"
 
-  name     = "content-table"
-  hash_key = "urn"
+  name     = "content-github-releases"
+  # fixme 24/04/2021: hardcoded hash key
+  hash_key = "Urn"
 
   attributes = [
     {
-      name = "urn" # urn:pigeon.selftech.io:content:github_releases:/<repo_owner>/<repo_name>
+      # fixme 24/04/2021: hardcoded hash key
+      name = "Urn" # urn:pigeon.selftech.io:content:github_releases:/<repo_owner>/<repo_name>
       type = "S"
     }
   ]
