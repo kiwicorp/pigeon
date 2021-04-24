@@ -96,9 +96,9 @@ locals {
   } }
 
   event_targets = { for index, gh_content in var.gh_content : local.event_rule_names[index] => [{
-    name = local.event_target_names[index]
-    arn  = module.gh_content_fn.this_lambda_function_arn
-    constant = jsonencode({
+    name  = local.event_target_names[index]
+    arn   = module.gh_content_fn.this_lambda_function_arn
+    input = jsonencode({
       access_token = var.gh_access_token
       repo_owner   = gh_content.repo_owner
       repo_name    = gh_content.repo_name
