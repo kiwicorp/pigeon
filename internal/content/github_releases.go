@@ -43,6 +43,8 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 		return false, nil
 	}
 
+	// fixme 24/04/2021: some situations may lead to a request that asks for more than 100 items,
+	// and that's prohibited by the github v4 api
 	releases, err := apiClient.LatestReleases(ctx, ch.RepoOwner, ch.RepoName, totalCount-item.TotalCount)
 	if err != nil {
 		return true, err
