@@ -24,6 +24,14 @@ module "gh_content_fn" {
   create_package         = false
   local_existing_package = "../../cmd/content_github_releases/content_github_releases_dev_linux_amd64.zip"
 
+  allowed_triggers = { for key, value in module.gh_content_events.eventbridge_rule_arns: key => {
+      service = "events"
+      arn     = value
+    }
+  }
+  # fixme 24/04/2021: only for unpublished versions
+  create_current_version_allowed_triggers = false
+
   attach_policy_statements = true
   policy_statements = {
     dynamodb = {
