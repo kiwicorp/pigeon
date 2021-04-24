@@ -2,9 +2,11 @@ package content
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/selftechio/pigeon/internal/content/github_releases"
+	"github.com/selftechio/pigeon/internal/db"
+	"github.com/selftechio/pigeon/internal/model"
 )
 
 type GithubReleasesContentHandler struct {
@@ -29,18 +31,27 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 		return false, err
 	}
 
-	prevTotalCount := 0 // fixme 23/04/2021: get value from database
-	if prevTotalCount == totalCount {
+	item := &model.GithubRepositoryReleases{
+		// fixme 24/04/2021: duplicated urn creation code
+		Urn: fmt.Sprintf("urn:pigeon-selftech-io:content:github_releases:%s/%s", ch.RepoOwner, ch.RepoName),
+	}
+	err = db.GetItem(item)
+	if err != nil {
+		return false, err
+	}
+	if item.TotalCount == totalCount {
 		return false, nil
 	}
 
-	releases, err := apiClient.LatestReleases(ctx, ch.RepoOwner, ch.RepoName, totalCount-prevTotalCount)
+	releases, err := apiClient.LatestReleases(ctx, ch.RepoOwner, ch.RepoName, totalCount-item.TotalCount)
 	if err != nil {
 		return true, err
 	}
 
-	// todo 23/04/2021: save the changes in the database
-	log.Printf("Latest releases: %#v", releases)
+	_, err = db.PutItem(releases)
+	if err != nil {
+		return true, err
+	}
 
 	return true, nil
 }

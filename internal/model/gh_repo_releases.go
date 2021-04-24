@@ -5,7 +5,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+)
+
+const (
+	tableName = "content-github-releases"
 )
 
 // GithubRepositoryReleases is the model for a repository releases object.
@@ -35,29 +38,14 @@ type GithubRepositoryReleasesData struct {
 }
 
 func (m *GithubRepositoryReleases) TableName() *string {
-	return aws.String("content-github-releases")
-}
-
-func (m *GithubRepositoryReleases) AvMap() (map[string]*dynamodb.AttributeValue, error) {
-	return dynamodbattribute.MarshalMap(m)
+	return aws.String(tableName)
 }
 
 func (m *GithubRepositoryReleases) Key() map[string]*dynamodb.AttributeValue {
 	return map[string]*dynamodb.AttributeValue{
+		// fixme 24/04/2021: hardcoded hash key
 		"Urn": {
 			S: aws.String(m.Urn),
 		},
 	}
-}
-
-func (m *GithubRepositoryReleases) ExpressionAv() map[string]*dynamodb.AttributeValue {
-	return nil
-}
-
-func (m *GithubRepositoryReleases) ReturnValues() string {
-	return ""
-}
-
-func (m *GithubRepositoryReleases) UpdateExpression() string {
-	return ""
 }
