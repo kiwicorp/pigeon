@@ -12,6 +12,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 }
 
+provider "cloudflare" {
+  api_token = var.cf_api_token
+}
+
 module "gh_content_fn" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "1.45.0"
@@ -112,4 +116,12 @@ locals {
       repo_name    = gh_content.repo_name
     })
   }] }
+}
+
+module "pigeon_ses" {
+  source  = "selftechio/ses-cf-domain/aws"
+  version = "0.1.0"
+
+  zone   = var.ses_zone
+  domain = var.ses_domain
 }

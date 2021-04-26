@@ -22,3 +22,18 @@ variable "gh_content" {
   }))
   description = "A list of content parameters used for building events for GitHub content."
 }
+
+variable "cf_api_token" {
+  type        = string
+  description = "Cloudflare API token."
+}
+
+variable "ses_zone" {
+  type        = string
+  description = "Zone for SES."
+}
+
+variable "ses_domain" {
+  type        = string
+  description = "Domain for SES."
+}
