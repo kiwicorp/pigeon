@@ -112,7 +112,7 @@ locals {
 
   event_rules = { for index, gh_content in var.gh_content : local.event_rule_names[index] => {
     description         = "GitHub content - ${gh_content.repo_owner}/${gh_content.repo_name}."
-    schedule_expression = "cron(0 0 ? * * *)"
+    schedule_expression = "cron(0 0 * * ? *)"
   } }
 
   event_targets = { for index, gh_content in var.gh_content : local.event_rule_names[index] => [{
