@@ -2,7 +2,6 @@ package github_releases
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/selftechio/pigeon/internal/model"
 	"github.com/shurcooL/githubv4"

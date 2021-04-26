@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -47,5 +48,13 @@ func (m *GithubRepositoryReleases) Key() map[string]*dynamodb.AttributeValue {
 		"Urn": {
 			S: aws.String(m.Urn),
 		},
+	}
+}
+
+// NewGithubRepositoryReleases creates a new github repository releases object
+// and assigns it a urn.
+func NewGithubRepositoryReleases(owner, name string) *GithubRepositoryReleases {
+	return &GithubRepositoryReleases{
+		Urn: fmt.Sprintf("urn:pigeon-selftech-io:content:github_releases:%s/%s", owner, name),
 	}
 }

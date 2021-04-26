@@ -2,7 +2,6 @@ package content
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/selftechio/pigeon/internal/content/github_releases"
 	"github.com/selftechio/pigeon/internal/db"
