@@ -30,10 +30,7 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 		return false, err
 	}
 
-	item := &model.GithubRepositoryReleases{
-		// fixme 24/04/2021: duplicated urn creation code
-		Urn: fmt.Sprintf("urn:pigeon-selftech-io:content:github_releases:%s/%s", ch.RepoOwner, ch.RepoName),
-	}
+	item := model.NewGithubRepositoryReleases(ch.RepoOwner, ch.RepoName)
 	err = db.GetItem(item)
 	if err != nil {
 		return false, err

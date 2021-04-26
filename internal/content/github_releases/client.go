@@ -53,11 +53,8 @@ func (c *v4ApiClient) LatestReleases(ctx context.Context, owner, name string, co
 		return nil, err
 	}
 
-	releases := &model.GithubRepositoryReleases{
-		// fixme 24/04/2021: duplicated urn creation code
-		Urn:        fmt.Sprintf("urn:pigeon-selftech-io:content:github_releases:%s/%s", owner, name),
-		TotalCount: int(qReleases.Repository.Releases.TotalCount),
-	}
+	releases := model.NewGithubRepositoryReleases(owner, name)
+	releases.TotalCount = int(qReleases.Repository.Releases.TotalCount)
 
 	releases_data := make([]model.GithubRepositoryReleasesData, 0, len(qReleases.Repository.Releases.Edges))
 	for _, release := range qReleases.Repository.Releases.Edges {
