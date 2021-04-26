@@ -58,6 +58,14 @@ module "gh_content_fn" {
       ],
       resources = ["${module.content_table.this_dynamodb_table_arn}/index/*"]
     }
+    ses = {
+      effect  = "Allow"
+      actions = [
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+      ]
+      resources = ["*"]
+    }
   }
 
   tags = local.tags
