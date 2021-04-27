@@ -3,11 +3,11 @@ package db
 import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/selftechio/pigeon/internal"
+	"github.com/selftechio/pigeon/internal/common"
 )
 
 var (
-	client = dynamodb.New(internal.Session)
+	client = dynamodb.New(common.Session)
 )
 
 // PutItem creates a new item in the database.
