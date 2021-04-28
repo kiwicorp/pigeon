@@ -68,6 +68,9 @@ module "gh_content_fn" {
     }
   }
 
+  // fixme 27/04/2021: hardcoded value
+  cloudwatch_logs_retention_in_days = 30
+
   tags = local.tags
 }
 
