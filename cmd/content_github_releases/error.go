@@ -9,6 +9,7 @@ var (
 	ErrMissingAccessToken = errors.New("content: github releases: missing access token")
 	ErrMissingRepoOwner   = errors.New("content: github releases: missing repo owner")
 	ErrMissingRepoName    = errors.New("content: github releases: missing repo name")
+	ErrMissingRecipient   = errors.New("content: github releases: missing recipient")
 )
 
 type Error struct {

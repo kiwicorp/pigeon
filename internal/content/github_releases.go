@@ -12,13 +12,15 @@ type GithubReleasesContentHandler struct {
 	accessToken string
 	RepoOwner   string
 	RepoName    string
+	recipient   string
 }
 
-func NewGithubReleasesContentHandler(accessToken, repoOwner, repoName string) GithubReleasesContentHandler {
+func NewGithubReleasesContentHandler(accessToken, repoOwner, repoName, recipient string) GithubReleasesContentHandler {
 	return GithubReleasesContentHandler{
 		accessToken: accessToken,
 		RepoOwner:   repoOwner,
 		RepoName:    repoName,
+		recipient:   recipient,
 	}
 }
 

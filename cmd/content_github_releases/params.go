@@ -4,6 +4,7 @@ type Params struct {
 	AccessToken string `json:"access_token"`
 	RepoOwner   string `json:"repo_owner"`
 	RepoName    string `json:"repo_name"`
+	Recipient   string `json:"recipient"`
 }
 
 func validateParams(params Params) error {
@@ -16,6 +17,9 @@ func validateParams(params Params) error {
 	}
 	if params.RepoName == "" {
 		errs = append(errs, ErrMissingRepoName)
+	}
+	if params.Recipient == "" {
+		errs = append(errs, ErrMissingRecipient)
 	}
 
 	if len(errs) > 0 {

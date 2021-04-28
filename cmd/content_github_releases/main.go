@@ -15,7 +15,7 @@ func handleRequest(ctx context.Context, params Params) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := content.NewGithubReleasesContentHandler(params.AccessToken, params.RepoOwner, params.RepoName)
+	handler := content.NewGithubReleasesContentHandler(params.AccessToken, params.RepoOwner, params.RepoName, params.Recipient)
 	changed, err := handler.Handle(ctx)
 	if err != nil {
 		return nil, err
