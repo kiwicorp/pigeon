@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	// fixme 26/04/2021: hardcoded table name
 	tableName = "content-github-releases"
 )
 
