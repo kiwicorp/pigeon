@@ -46,6 +46,10 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 			return false, err
 		}
 		item.TotalCount = &totalCount
+		_, err = db.PutItem(item)
+		if err != nil {
+			return false, err
+		}
 		return false, nil
 	}
 
