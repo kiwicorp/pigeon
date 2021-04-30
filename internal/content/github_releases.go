@@ -64,7 +64,6 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 	if totalCount == *item.TotalCount {
 		return false, nil
 	}
-	item.TotalCount = &totalCount
 
 	// get the diff of releases and cap it at 100, as allowed by the github api
 	// fixme 30/04/2021: use multiple requests to grab all releases
@@ -99,6 +98,7 @@ func (ch *GithubReleasesContentHandler) Handle(ctx context.Context) (bool, error
 	}
 
 	// update the total count
+	item.TotalCount = &totalCount
 	_, err = db.PutItem(item)
 	if err != nil {
 		return true, err
