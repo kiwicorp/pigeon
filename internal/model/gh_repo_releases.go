@@ -16,8 +16,7 @@ const (
 // GithubRepositoryReleases is the model for a repository releases object.
 type GithubRepositoryReleases struct {
 	Urn        string
-	TotalCount int
-	Data       []GithubRepositoryReleasesData
+	TotalCount *int
 }
 
 // GithubRepositoryReleasesData represents the data that changed since the last
@@ -29,7 +28,7 @@ type GithubRepositoryReleasesData struct {
 	}
 	CreatedAt       time.Time
 	Description     string
-	DescriptionHtml string
+	DescriptionHtml string `graphql:"descriptionHTML"`
 	IsDraft         bool
 	IsPrerelease    bool
 	Name            string
