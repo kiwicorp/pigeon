@@ -11,8 +11,10 @@ import (
 // GithubV4ApiClient defines a few abstraction methods that should pe provided
 // by an api client.
 type GithubV4ApiClient interface {
+	// ReleasesTotalCount retrieves the number of releases.
 	ReleasesTotalCount(ctx context.Context, owner, name string) (int, error)
-	LatestReleases(ctx context.Context, owner, name string, count int) (*model.GithubRepositoryReleases, error)
+	// LatestReleases retrieves a list of releases.
+	LatestReleases(ctx context.Context, owner, name string, count int) ([]model.GithubRepositoryReleasesData, error)
 }
 
 type v4ApiClient struct {
@@ -41,7 +43,7 @@ func (c *v4ApiClient) ReleasesTotalCount(ctx context.Context, owner, name string
 	return int(qTotalCount.Repository.Releases.TotalCount), nil
 }
 
-func (c *v4ApiClient) LatestReleases(ctx context.Context, owner, name string, count int) (*model.GithubRepositoryReleases, error) {
+func (c *v4ApiClient) LatestReleases(ctx context.Context, owner, name string, count int) ([]model.GithubRepositoryReleasesData, error) {
 	qReleases := repositoryReleasesQuery{}
 	variables := map[string]interface{}{
 		"owner": githubv4.String(owner),
@@ -52,33 +54,9 @@ func (c *v4ApiClient) LatestReleases(ctx context.Context, owner, name string, co
 	if err != nil {
 		return nil, err
 	}
-
-	releases := model.NewGithubRepositoryReleases(owner, name)
-	releases.TotalCount = int(qReleases.Repository.Releases.TotalCount)
-
-	releases_data := make([]model.GithubRepositoryReleasesData, 0, len(qReleases.Repository.Releases.Edges))
-	for _, release := range qReleases.Repository.Releases.Edges {
-		releases_data = append(releases_data, model.GithubRepositoryReleasesData{
-			Author: struct {
-				Email string
-				Login string
-			}{
-				Email: release.Node.Author.Email,
-				Login: release.Node.Author.Login,
-			},
-			CreatedAt:       release.Node.CreatedAt,
-			Description:     release.Node.Description,
-			DescriptionHtml: release.Node.DescriptionHtml,
-			IsDraft:         release.Node.IsDraft,
-			IsPrerelease:    release.Node.IsPrerelease,
-			Name:            release.Node.Name,
-			PublishedAt:     release.Node.PublishedAt,
-			Url:             release.Node.Url,
-			TagName:         release.Node.TagName,
-			IsLatest:        release.Node.IsLatest,
-		})
+	releases := make([]model.GithubRepositoryReleasesData, len(qReleases.Repository.Releases.Edges))
+	for index, release := range qReleases.Repository.Releases.Edges {
+		releases[index] = release.Node
 	}
-
-	releases.Data = releases_data
 	return releases, nil
 }
