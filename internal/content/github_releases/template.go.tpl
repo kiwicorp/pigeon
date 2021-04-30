@@ -1,12 +1,12 @@
 {{ .Owner }}/{{ .Name }}
 ==========
 
-{{- range .Releases -}}
-[{{- .Name -}}] - {{- .PublishedAt -}}
+{{ range .Releases -}}
+[{{- .Name -}}] - {{ .PublishedAt }}
 =====
 
-{{- .Description -}}
+{{ .Description }}
 
-[{{- .Name -}}]: {{- .Url -}}
+[{{- .Name -}}]: {{ .Url }}
 
 {{- end -}}
