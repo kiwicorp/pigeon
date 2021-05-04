@@ -125,6 +125,7 @@ locals {
       access_token = var.gh_access_token
       repo_owner   = gh_content.repo_owner
       repo_name    = gh_content.repo_name
+      recipient    = local.recipient
     })
   }] }
 }
